@@ -6,7 +6,7 @@ library(ggtext)
 # Fonts -------------------------------------------------------------------
 
 font_add_google(name = "Roboto", family = "roboto")
-font_add_google(name = "Rubik", family = "rubik") #rubik light
+font_add_google(name = "Rubik", family = "rubik")
 showtext_auto()
 
 
@@ -29,47 +29,62 @@ apta_data <- tibble::tribble(
 
 # Plot --------------------------------------------------------------------
 
+# colors
 bg_gray <- "#F5F5F5"
 axis_line_gray <- "#B8B8B8"
 other_gray <- "#474747"
 
+highlight_1 <- "#650533" #apta maroon
+highlight_2 <- "#094279" #apta blue
+
+#add in new columns re: color and labels
+
 plot_data <- apta_data %>%
   mutate(
     highlight = case_when(
-      category == "Cut Service" ~ "#650533",
-      str_detect(category, "Capital") ~ "#094279",
+      category == "Cut Service" ~ highlight_1,
+      str_detect(category, "Capital") ~ highlight_2,
       TRUE ~ 	other_gray
     ),
     category_label = glue::glue("<span style ='color:{highlight}'>{category}</span>"),
     category_label = fct_reorder(category_label, value)
   )
 
+# the chart!
 new_plot <- plot_data %>%
   ggplot(aes(x = value, y = category_label, fill = highlight)) +
   geom_col() +
   scale_x_continuous(labels = scales::percent_format()) +
   scale_fill_identity() +
-  labs(title = "Without emergency funding, your transit agency might<br><span style='color:#650533'>cut service</span> or <span style='color:#094279'>delay infrastructure projects</span>",
+  labs(title = glue::glue("Without emergency funding from Congress, your transit 
+                          agency<br>might <span style='color:{highlight_1}'>cut 
+                          service</span> or <span style='color:{highlight_2}'>delay 
+                          infrastructure projects</span>"),
        subtitle = "Percent of transit agencies that said they were considering the following actions",
        caption = "n = 128<br>Source: APTA.com, Sep 2020") +
   theme_classic(base_size = 12) +
   theme(
+    #align title left
+    plot.title.position = "plot",
+    #colors and fonts
+    text = element_text(family = "rubik"),
     plot.background = element_rect(fill = bg_gray),
     panel.background = element_rect(fill = bg_gray,
                                     colour = bg_gray),
-    text = element_text(family = "rubik"),
     axis.line = element_line(color = axis_line_gray),
-    plot.title.position = "plot",
     plot.title = element_markdown(family = "roboto", face = "bold"),
     plot.subtitle = element_markdown(family = "roboto"),
     plot.caption = element_markdown(), 
-    axis.title = element_blank(),
     axis.text.y = element_markdown(),
+    #no annoyting stuff
+    axis.title = element_blank(),
     legend.position = "none"
     )
 
 
 # Export Plot -------------------------------------------------------------
+
+# {showtext} requires these steps, no ggsave available
 
 png(filename = "new_plot.png",
     width = 600,
