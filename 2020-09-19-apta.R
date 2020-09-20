@@ -29,13 +29,16 @@ apta_data <- tibble::tribble(
 
 # Plot --------------------------------------------------------------------
 
+bg_gray <- "#F5F5F5"
+axis_line_gray <- "#B8B8B8"
+other_gray <- "#474747"
 
 plot_data <- apta_data %>%
   mutate(
     highlight = case_when(
       category == "Cut Service" ~ "#650533",
       str_detect(category, "Capital") ~ "#094279",
-      TRUE ~ "#7F7F7F"	
+      TRUE ~ 	other_gray
     ),
     category_label = glue::glue("<span style ='color:{highlight}'>{category}</span>"),
     category_label = fct_reorder(category_label, value)
@@ -48,14 +51,14 @@ new_plot <- plot_data %>%
   scale_fill_identity() +
   labs(title = "Without emergency funding, your transit agency might<br><span style='color:#650533'>cut service</span> or <span style='color:#094279'>delay infrastructure projects</span>",
        subtitle = "Percent of transit agencies that said they were considering the following actions",
-       caption = "n = 128<br>Source: APTA.com") +
+       caption = "n = 128<br>Source: APTA.com, Sep 2020") +
   theme_classic(base_size = 12) +
   theme(
-    plot.background = element_rect(fill = "gray95"),
-    panel.background = element_rect(fill = "gray95",
-                                    colour = "gray95"),
+    plot.background = element_rect(fill = bg_gray),
+    panel.background = element_rect(fill = bg_gray,
+                                    colour = bg_gray),
     text = element_text(family = "rubik"),
-    axis.line = element_line(color = "gray75"),
+    axis.line = element_line(color = axis_line_gray),
     plot.title.position = "plot",
     plot.title = element_markdown(family = "roboto", face = "bold"),
     plot.subtitle = element_markdown(family = "roboto"),
