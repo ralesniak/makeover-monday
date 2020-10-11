@@ -14,7 +14,6 @@ showtext_auto()
 
 bg_gray <- "#f4f4f4"
 axis_line_gray <- "#B8B8B8"
-other_gray <- "#474747"
 
 highlight_1 <- "#1d3557"
 highlight_2 <- "#e63946" 
@@ -41,13 +40,16 @@ vmt_data <- tibble::tribble(
            "Other Urban", 2020L, 43.6, 39.5, 37.6,  29.4,  36.1, 40.3,  43.2,   NA,   NA,    NA,   NA,   NA
   )
 
+#reshape from wide to tidy
 vmt_reshaped <- vmt_data %>%
   pivot_longer(cols = -c("category", "year"), names_to = "month_char") %>%
   mutate(year_month = ymd(glue::glue("{year}-{month_char}-01"))) %>%
   filter(!is.na(value)) %>%
+  #create a general category to summarize
   mutate(general_category = if_else(str_detect(category, "Rural"), "Rural", "Urban"))
 
 vmt_chart <- vmt_reshaped %>%
+  #split out into two lines to compare year-to-year
   group_by(year_month) %>%
   summarize(value = sum(value)) %>%
   mutate(month = month(year_month, label = TRUE),
@@ -79,6 +81,9 @@ vmt_chart <- vmt_reshaped %>%
     axis.title = element_blank(),
     legend.position = "none"
   )
+
+
+# Export in Twitter Size --------------------------------------------------
 
 png(filename = "vmt_chart.png",
     width = 600,
