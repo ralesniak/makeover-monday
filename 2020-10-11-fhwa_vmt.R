@@ -60,7 +60,7 @@ vmt_chart <- vmt_reshaped %>%
   scale_color_identity() +
   scale_y_continuous(limits = c(100, NA),
     labels = scales::number_format(suffix = "B")) +
-  labs(title = "Traffic is stabilizing after COVID-related travel dropped",
+  labs(title = "Traffic is stabilizing after COVID-related plunge",
        subtitle = glue::glue("Monthly vehicle miles (urban and rural), 
        <b style='color:{highlight_1}'>2019</b> compared to <b style='color:{highlight_2}'>2020</b>"),
        caption = "Source: Federal Highway Administration, July 2020") +
